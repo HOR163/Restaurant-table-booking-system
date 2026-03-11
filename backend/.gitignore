@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Postgres data ###
+postgres-data
+
+### Spring local config ###
+/src/main/resources/application-*.properties
