@@ -1,0 +1,218 @@
+# Based off of https://docs.liquibase.com/secure/user-guide-5-1/yaml-changelog-example
+databaseChangeLog:
+  - changeSet:
+      id: 2026-03-14 Add restaurant table
+      author: HOR163
+      changes:
+        # Restaurant table
+        - createTable:
+            tableName: restaurant
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: owner
+                  type: uuid
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2026-03-14 Add tables table
+      author: HOR163
+      changes:
+        # Tables table
+        - createTable:
+            tableName: table
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: restaurant_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: seats_amount
+                  type: smallint
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2026-03-14 Add attribute table
+      author: HOR163
+      changes:
+        # Create attribute table
+        - createTable:
+            tableName: attribute
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2026-03-14 Add user table
+      author: HOR163
+      changes:
+        # Create user table
+        - createTable:
+            tableName: user
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: password
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2026-03-14 Add table to attribute join table
+      author: HOR163
+      changes:
+        # Create Table_attribute join table
+        - createTable:
+            tableName: table_attribute
+            columns:
+              - column:
+                  name: table_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: attribute_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+  - changeSet:
+      id: 2026-03-14 Add booking table
+      author: HOR163
+      changes:
+        # Create booking table
+        - createTable:
+            tableName: booking
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: table_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+              - column:
+                  name: start_time
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pending
+                  type: bool
+                  constraints:
+                    nullable: false
+              - column:
+                  name: pending_end_time
+                  type: timestamptz
+                  constraints:
+                    nullable: true
+
+  # https://docs.liquibase.com/secure/reference-guide-5-1/change-types/addcheckconstraint
+  # Couldn't use addCheckConstraint, due to it being paid "pro" feature, thus SQL is used
+  - changeSet:
+      id: 2026-03-14 Add non empty string constraints
+      author: HOR163
+      changes:
+        - sql:
+            sql: ALTER TABLE restaurant ADD CONSTRAINT chk_restaurant_name CHECK(LENGTH(TRIM(name)) > 0)
+        - sql:
+            sql: ALTER TABLE attribute ADD CONSTRAINT chk_attribute_name CHECK(LENGTH(TRIM(name)) > 0)
+
+  - changeSet:
+      id: 2026-03-14 Add table seats positive number constraint
+      author: HOR163
+      changes:
+        - sql:
+            sql: ALTER TABLE public.table ADD CONSTRAINT chk_seats_amount CHECK(seats_amount > 0)
+
+  # https://docs.liquibase.com/secure/reference-guide-5-1/change-types/addforeignkeyconstraint
+  - changeSet:
+      id: 2026-03-14 Add foreign key constraints
+      author: HOR163
+      changes:
+        # User to restaurant
+        - addForeignKeyConstraint:
+            baseTableName: restaurant
+            baseColumnNames: owner
+            constraintName: fk_restaurant_owner
+            referencedTableName: user
+            referencedTableSchemaName: public
+            referencedColumnNames: id
+        # Restaurant to table
+        - addForeignKeyConstraint:
+            baseTableName: table
+            baseColumnNames: restaurant_id
+            constraintName: fk_restaurant_table
+            referencedTableName: restaurant
+            referencedColumnNames: id
+        # User to booking
+        - addForeignKeyConstraint:
+            baseTableName: booking
+            baseColumnNames: user_id
+            constraintName: fk_booking_user
+            referencedTableName: user
+            referencedTableSchemaName: public
+            referencedColumnNames: id
+        # Table to booking
+        - addForeignKeyConstraint:
+            baseTableName: booking
+            baseColumnNames: table_id
+            constraintName: fk_booking_table
+            referencedTableName: table
+            referencedColumnNames: id
+        # Table to table_attribute join table
+        - addForeignKeyConstraint:
+            baseTableName: table_attribute
+            baseColumnNames: table_id
+            constraintName: fk_table_attribute_to_table
+            referencedTableName: table
+            referencedColumnNames: id
+        # Attribute to table_attribute join table
+        - addForeignKeyConstraint:
+            baseTableName: table_attribute
+            baseColumnNames: attribute_id
+            constraintName: fk_table_attribute_to_attribute
+            referencedTableName: attribute
+            referencedColumnNames: id
