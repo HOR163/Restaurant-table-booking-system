@@ -32,6 +32,10 @@ public class BookingEntity {
     private TableEntity table;
 
     @NotNull
+    @Column(name = "start_time", nullable = false)
+    private OffsetDateTime startTime;
+
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
