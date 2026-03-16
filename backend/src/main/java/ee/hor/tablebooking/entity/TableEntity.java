@@ -7,12 +7,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -33,6 +38,13 @@ public class TableEntity {
     @NotNull
     @Column(name = "seats_amount", nullable = false)
     private Short seatsAmount;
+
+    @OneToMany(mappedBy = "table")
+    private Set<BookingEntity> bookings = new LinkedHashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "table_attribute", joinColumns = {@JoinColumn(name = "table_id")}, inverseJoinColumns = {@JoinColumn(name = "attribute_id")})
+    private Set<AttributeEntity> attributes = new LinkedHashSet<>();
 
 
 }

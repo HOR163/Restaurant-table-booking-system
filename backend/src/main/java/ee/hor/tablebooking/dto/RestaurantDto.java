@@ -8,6 +8,7 @@ import java.util.UUID;
 @Data
 public class RestaurantDto {
     private UUID id;
+    private UUID ownerId;
     private String name;
-    private List<TableDto> tables;
+    private List<UUID> tables;
 }

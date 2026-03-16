@@ -10,6 +10,7 @@ public class BookingDto {
     private UUID id;
     private UUID tableId;
     private UUID userId;
+    private OffsetDateTime startTime;
     private Boolean pending;
     private OffsetDateTime pendingEndTime;
 }

@@ -5,12 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -27,6 +30,9 @@ public class AttributeEntity {
     @NotNull
     @Column(name = "name", nullable = false, length = 100)
     private String name;
+
+    @ManyToMany(mappedBy = "attributes")
+    private Set<TableEntity> tables = new LinkedHashSet<>();
 
 
 }

@@ -5,12 +5,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -32,6 +35,12 @@ public class UserEntity {
     @NotNull
     @Column(name = "password", nullable = false, length = 100)
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    private Set<BookingEntity> bookings = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "owner")
+    private Set<RestaurantEntity> restaurants = new LinkedHashSet<>();
 
 
 }
