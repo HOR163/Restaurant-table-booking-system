@@ -20,7 +20,7 @@ public interface TableMapper {
     @Mapping(target = "attributes", ignore = true)
     @Mapping(target = "bookings", ignore = true)
     @Mapping(target = "restaurant", ignore = true)
-    TableEntity mapToEntity(TableDto attributeDto);
+    TableEntity mapToEntity(TableDto tableDto);
 
     default UUID toId(TableEntity tableEntity) {
         return tableEntity != null ? tableEntity.getId() : null;

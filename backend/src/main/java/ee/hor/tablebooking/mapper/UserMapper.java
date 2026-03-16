@@ -1,5 +1,6 @@
 package ee.hor.tablebooking.mapper;
 
+import ee.hor.tablebooking.dto.RegisterUserDto;
 import ee.hor.tablebooking.dto.UserDto;
 import ee.hor.tablebooking.entity.UserEntity;
 import org.mapstruct.Mapper;
@@ -10,11 +11,11 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.ERROR,
         unmappedSourcePolicy = ReportingPolicy.WARN)
 public interface UserMapper {
-    UserDto mapToDto(UserEntity attributeEntity);
+    UserDto mapToDto(UserEntity userEntity);
 
-    // TODO: Change mapping from UserDto to SignUpDto
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "bookings", ignore = true)
     @Mapping(target = "restaurants", ignore = true)
-    UserEntity mapToEntity(UserDto attributeDto);
+    UserEntity mapToEntity(RegisterUserDto registerUserDto);
 }

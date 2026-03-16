@@ -13,9 +13,9 @@ import org.mapstruct.ReportingPolicy;
 )
 public interface RestaurantMapper {
     @Mapping(source = "owner.id", target = "ownerId")
-    RestaurantDto mapToDto(RestaurantEntity attributeEntity);
+    RestaurantDto mapToDto(RestaurantEntity restaurantEntity);
 
     @Mapping(target = "tables", ignore = true)
     @Mapping(target = "owner", ignore = true)
-    RestaurantEntity mapToEntity(RestaurantDto attributeDto);
+    RestaurantEntity mapToEntity(RestaurantDto restaurantDto);
 }
