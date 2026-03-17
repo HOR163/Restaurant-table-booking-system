@@ -1,6 +1,7 @@
 package ee.hor.tablebooking.controller;
 
 import ee.hor.tablebooking.dto.BookingDto;
+import ee.hor.tablebooking.service.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +19,22 @@ import java.util.UUID;
 @RequestMapping("bookings")
 @RequiredArgsConstructor
 public class BookingController {
+    private final BookingService bookingService;
+
     @GetMapping("/{id}")
     public ResponseEntity<BookingDto> getBooking(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        return ResponseEntity.ok(bookingService.getBooking(id));
     }
 
     @PostMapping
     public ResponseEntity<BookingDto> addBooking(@RequestBody BookingDto bookingDto) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        BookingDto newBooking = bookingService.addBooking(bookingDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newBooking);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBooking(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        bookingService.deleteBooking(id);
+        return ResponseEntity.noContent().build();
     }
 }

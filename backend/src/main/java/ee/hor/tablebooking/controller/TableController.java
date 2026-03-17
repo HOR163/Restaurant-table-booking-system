@@ -1,6 +1,7 @@
 package ee.hor.tablebooking.controller;
 
 import ee.hor.tablebooking.dto.TableDto;
+import ee.hor.tablebooking.service.TableService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +19,21 @@ import java.util.UUID;
 @RequestMapping("tables")
 @RequiredArgsConstructor
 public class TableController {
+    private final TableService tableService;
+
     @GetMapping("/{id}")
     public ResponseEntity<TableDto> getTable(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        return ResponseEntity.ok(tableService.getTable(id));
     }
 
     @PostMapping
     public ResponseEntity<TableDto> addTable(@RequestBody TableDto tableDto) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(tableService.addTable(tableDto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTable(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        tableService.deleteTable(id);
+        return ResponseEntity.noContent().build();
     }
 }

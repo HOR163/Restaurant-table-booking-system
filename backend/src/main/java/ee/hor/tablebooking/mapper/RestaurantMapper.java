@@ -6,6 +6,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.Collection;
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.ERROR,
         unmappedSourcePolicy = ReportingPolicy.WARN,
@@ -16,6 +19,9 @@ public interface RestaurantMapper {
     RestaurantDto mapToDto(RestaurantEntity restaurantEntity);
 
     @Mapping(target = "tables", ignore = true)
-    @Mapping(target = "owner", ignore = true)
+    @Mapping(source = "ownerId", target = "owner.id")
+    @Mapping(target = "id", ignore = true)
     RestaurantEntity mapToEntity(RestaurantDto restaurantDto);
+
+    List<RestaurantDto> mapToDto(Collection<RestaurantEntity> restaurantEntity);
 }

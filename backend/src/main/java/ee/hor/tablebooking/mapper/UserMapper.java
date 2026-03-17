@@ -14,7 +14,6 @@ public interface UserMapper {
     UserDto mapToDto(UserEntity userEntity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "password", ignore = true)
     @Mapping(target = "bookings", ignore = true)
     @Mapping(target = "restaurants", ignore = true)
     UserEntity mapToEntity(RegisterUserDto registerUserDto);

@@ -1,6 +1,7 @@
 package ee.hor.tablebooking.controller;
 
 import ee.hor.tablebooking.dto.AttributeDto;
+import ee.hor.tablebooking.service.AttributeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +19,21 @@ import java.util.UUID;
 @RequestMapping("attributes")
 @RequiredArgsConstructor
 public class AttributeController {
+    private final AttributeService attributeService;
+
     @GetMapping("/{id}")
     public ResponseEntity<AttributeDto> getAttribute(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        return ResponseEntity.ok(attributeService.getAttribute(id));
     }
 
     @PostMapping
     public ResponseEntity<AttributeDto> addAttribute(@RequestBody AttributeDto attributeDto) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(attributeService.addAttribute(attributeDto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAttribute(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+        attributeService.deleteAttribute(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

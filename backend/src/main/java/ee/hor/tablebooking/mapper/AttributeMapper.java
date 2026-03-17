@@ -15,6 +15,7 @@ public interface AttributeMapper {
     AttributeDto mapToDto(AttributeEntity attributeEntity);
 
     @Mapping(target = "tables", ignore = true)
+    @Mapping(target = "id", ignore = true)
     AttributeEntity mapToEntity(AttributeDto attributeDto);
 
     default UUID toId(AttributeEntity attributeEntity) {
