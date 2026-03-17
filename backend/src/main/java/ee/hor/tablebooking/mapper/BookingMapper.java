@@ -12,6 +12,7 @@ import org.mapstruct.ReportingPolicy;
 public interface BookingMapper {
     @Mapping(target = "tableId", source = "table.id")
     @Mapping(target = "userId", source = "user.id")
+    @Mapping(target="restaurantId", source = "table.restaurant.id")
     BookingDto mapToDto(BookingEntity bookingEntity);
 
     @Mapping(target="table.id", source="tableId")

@@ -1,6 +1,8 @@
 package ee.hor.tablebooking.controller;
 
+import ee.hor.tablebooking.dto.BookingDto;
 import ee.hor.tablebooking.dto.RestaurantDto;
+import ee.hor.tablebooking.dto.TableDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,6 +24,16 @@ public class RestaurantController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RestaurantDto> getRestaurant(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+    }
+
+    @GetMapping("/{id}/bookings")
+    public ResponseEntity<List<BookingDto>> getBookings(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+    }
+
+    @GetMapping("/{id}/tables")
+    public ResponseEntity<List<TableDto>> getTables(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 

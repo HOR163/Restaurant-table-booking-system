@@ -1,5 +1,6 @@
 package ee.hor.tablebooking.controller;
 
+import ee.hor.tablebooking.dto.BookingDto;
 import ee.hor.tablebooking.dto.RegisterUserDto;
 import ee.hor.tablebooking.dto.UserDto;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,6 +24,11 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable UUID id) {
+        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+    }
+
+    @GetMapping("/{id}/bookings")
+    public ResponseEntity<List<BookingDto>> getBookings(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
     }
 

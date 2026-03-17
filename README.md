@@ -46,3 +46,7 @@ You can setup the database view inside the editor, for that:
 
 ## Time management
 - Setup (base projects) - 2h
+- Database planning, setup and creation - 3h 30m
+- Entities, DTOs, repositories - 1h
+- Mappers and templates for controllers - 2h 30m
+- Service templates + planning functions - 1h
