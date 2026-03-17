@@ -2,10 +2,13 @@ package ee.hor.tablebooking.service;
 
 import ee.hor.tablebooking.dto.AttributeDto;
 import ee.hor.tablebooking.entity.AttributeEntity;
+import ee.hor.tablebooking.excpetion.EntityInUseException;
+import ee.hor.tablebooking.excpetion.ResourceNotFoundException;
 import ee.hor.tablebooking.mapper.AttributeMapper;
 import ee.hor.tablebooking.repository.AttributeRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -18,8 +21,9 @@ public class AttributeService {
     private final AttributeMapper attributeMapper;
 
     public AttributeDto getAttribute(UUID attributeId) {
-        // TODO: throw an error if attribute does not exist
-        AttributeEntity attributeEntity = attributeRepository.findById(attributeId).orElse(null);
+        AttributeEntity attributeEntity = attributeRepository.findById(attributeId).orElseThrow(
+                () -> new ResourceNotFoundException("Attribute with given id does not exist")
+        );
 
         return attributeMapper.mapToDto(attributeEntity);
     }
@@ -32,7 +36,13 @@ public class AttributeService {
     }
 
     public void deleteAttribute(UUID attributeId) {
-        // TODO: throw an error if attribute doesn't exist OR the attribute is used by tables
-        attributeRepository.deleteById(attributeId);
+        if (!attributeRepository.existsById(attributeId)) {
+            throw new ResourceNotFoundException("Attribute with given id does not exist");
+        }
+        try {
+            attributeRepository.deleteById(attributeId);
+        } catch (DataIntegrityViolationException _) {
+            throw new EntityInUseException("Attribute is being used by other objects, remove them before proceeding with deletion");
+        }
     }
 }

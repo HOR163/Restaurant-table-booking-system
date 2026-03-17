@@ -2,9 +2,12 @@ package ee.hor.tablebooking.service;
 
 import ee.hor.tablebooking.dto.RestaurantDto;
 import ee.hor.tablebooking.entity.RestaurantEntity;
+import ee.hor.tablebooking.excpetion.EntityInUseException;
+import ee.hor.tablebooking.excpetion.ResourceNotFoundException;
 import ee.hor.tablebooking.mapper.RestaurantMapper;
 import ee.hor.tablebooking.repository.RestaurantRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,8 +21,9 @@ public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
 
     public RestaurantDto getRestaurant(UUID id) {
-        // FIXME: throw an error
-        RestaurantEntity restaurant = restaurantRepository.findById(id).orElse(null);
+        RestaurantEntity restaurant = restaurantRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Restaurant with given id does not exist")
+        );
 
         return restaurantMapper.mapToDto(restaurant);
     }
@@ -39,6 +43,13 @@ public class RestaurantService {
     }
 
     public void deleteRestaurant(UUID id) {
-        restaurantRepository.deleteById(id);
+        if (!restaurantRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Restaurant with given id does not exist");
+        }
+        try {
+            restaurantRepository.deleteById(id);
+        } catch (DataIntegrityViolationException _) {
+            throw new EntityInUseException("Table is being used by other objects, remove them before proceeding with deletion");
+        }
     }
 }

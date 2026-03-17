@@ -3,9 +3,11 @@ package ee.hor.tablebooking.service;
 import ee.hor.tablebooking.dto.BookingDto;
 import ee.hor.tablebooking.entity.BookingEntity;
 import ee.hor.tablebooking.entity.TableEntity;
+import ee.hor.tablebooking.excpetion.ResourceNotFoundException;
 import ee.hor.tablebooking.mapper.BookingMapper;
 import ee.hor.tablebooking.repository.BookingRepository;
 import ee.hor.tablebooking.repository.TableRepository;
+import ee.hor.tablebooking.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +27,24 @@ public class BookingService {
     private final BookingMapper bookingMapper;
     private final BookingRepository bookingRepository;
     private final TableRepository tableRepository;
+    private final UserRepository userRepository;
 
     public BookingDto getBooking(UUID id) {
-        // FIXME: throw an error if not found
-        BookingEntity bookingEntity = bookingRepository.findById(id).orElse(null);
+        BookingEntity bookingEntity = bookingRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Booking with given id does not exist")
+        );
 
         return bookingMapper.mapToDto(bookingEntity);
     }
 
     public BookingDto addBooking(BookingDto bookingDto) {
+        if (!userRepository.existsById(bookingDto.getUserId())){
+            throw new ResourceNotFoundException("User with given id does not exist");
+        }
+        if (!tableRepository.existsById(bookingDto.getTableId())) {
+            throw new ResourceNotFoundException("Table with given id does not exist");
+        }
+
         BookingEntity bookingEntity = bookingMapper.mapToEntity(bookingDto);
 
         // Manually add the whole table entity to the booking proxy, so that mapStruct can later use it for converting
@@ -51,10 +62,18 @@ public class BookingService {
     }
 
     public void deleteBooking(UUID id) {
+        if (!bookingRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Booking with given id does not exist");
+        }
+
         bookingRepository.deleteById(id);
     }
 
     public List<BookingDto> getUserBookings(UUID userId, OffsetDateTime startTime, OffsetDateTime endTime) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResourceNotFoundException("User with given id does not exist");
+        }
+
         List<BookingEntity> bookings = bookingRepository.findAllByUserIdAndStartTimeBetween(userId, startTime, endTime);
         return bookingMapper.mapToDto(bookings);
     }

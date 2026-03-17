@@ -50,3 +50,5 @@ You can setup the database view inside the editor, for that:
 - Entities, DTOs, repositories - 1h
 - Mappers and templates for controllers - 2h 30m
 - Service templates + planning functions - 1h
+- Basic service implementation and integration with controllers - 3h
+- Setting up and using custom ApplicationExceptions - 1h
