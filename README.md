@@ -52,3 +52,4 @@ You can setup the database view inside the editor, for that:
 - Service templates + planning functions - 1h
 - Basic service implementation and integration with controllers - 3h
 - Setting up and using custom ApplicationExceptions - 1h
+- Timeslot finding - 2h 30m

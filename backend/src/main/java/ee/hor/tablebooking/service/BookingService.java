@@ -1,11 +1,13 @@
 package ee.hor.tablebooking.service;
 
 import ee.hor.tablebooking.dto.BookingDto;
+import ee.hor.tablebooking.dto.BookingSlotDto;
 import ee.hor.tablebooking.entity.BookingEntity;
 import ee.hor.tablebooking.entity.TableEntity;
 import ee.hor.tablebooking.excpetion.ResourceNotFoundException;
 import ee.hor.tablebooking.mapper.BookingMapper;
 import ee.hor.tablebooking.repository.BookingRepository;
+import ee.hor.tablebooking.repository.RestaurantRepository;
 import ee.hor.tablebooking.repository.TableRepository;
 import ee.hor.tablebooking.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,8 +15,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -22,12 +32,16 @@ import java.util.UUID;
 @Transactional
 public class BookingService {
 
+    public static final int BOOKING_DURATION = 180;
+    public static final LocalTime BOOKING_MINIMUM_START_TIME = LocalTime.of(10, 0, 0);
+    public static final LocalTime BOOKING_MAXIMUM_START_TIME = LocalTime.of(21, 0, 0);
     private static final int BOOKING_PENDING_MINUTES = 15;
 
     private final BookingMapper bookingMapper;
     private final BookingRepository bookingRepository;
     private final TableRepository tableRepository;
     private final UserRepository userRepository;
+    private final RestaurantRepository restaurantRepository;
 
     public BookingDto getBooking(UUID id) {
         BookingEntity bookingEntity = bookingRepository.findById(id).orElseThrow(
@@ -38,7 +52,7 @@ public class BookingService {
     }
 
     public BookingDto addBooking(BookingDto bookingDto) {
-        if (!userRepository.existsById(bookingDto.getUserId())){
+        if (!userRepository.existsById(bookingDto.getUserId())) {
             throw new ResourceNotFoundException("User with given id does not exist");
         }
         if (!tableRepository.existsById(bookingDto.getTableId())) {
@@ -90,5 +104,48 @@ public class BookingService {
             bookings = bookingRepository.findAllByRestaurantIdAndStartTimeIsAfter(restaurantId, spanStart);
         }
         return bookingMapper.mapToDto(bookings);
+    }
+
+    public Map<UUID, List<BookingSlotDto>> getRestaurantBookingSlots(UUID restaurantId, LocalDate date) {
+        if (!restaurantRepository.existsById(restaurantId)) {
+            throw new ResourceNotFoundException("Restaurant with given id does not exist");
+        }
+
+        List<TableEntity> tables = tableRepository.findAllByRestaurantId(restaurantId);
+        List<BookingEntity> bookings = bookingRepository.findAllByRestaurantIdAndStartTimeIsBetween(restaurantId,
+                date.atStartOfDay().atOffset(ZoneOffset.UTC),
+                date.atStartOfDay().plusDays(1).minusSeconds(1).atOffset(ZoneOffset.UTC)
+        );
+
+        bookings.sort(Comparator.comparing(BookingEntity::getStartTime));
+
+        Map<UUID, List<BookingSlotDto>> tableFreeSlots = new HashMap<>();
+        Map<UUID, LocalTime> tableCurrentSlotStart = new HashMap<>();
+
+        for (BookingEntity booking : bookings) {
+            UUID tableId = booking.getTable().getId();
+            LocalTime bookingStartTime = booking.getStartTime().toLocalTime();
+            LocalTime slotStartTime = tableCurrentSlotStart.getOrDefault(tableId, BOOKING_MINIMUM_START_TIME);
+
+            if (Duration.between(slotStartTime, bookingStartTime).toMinutes() >= BOOKING_DURATION) {
+                tableFreeSlots.computeIfAbsent(tableId, k -> new ArrayList<>())
+                        .add(new BookingSlotDto(slotStartTime, bookingStartTime));
+            }
+
+            tableCurrentSlotStart.put(tableId, bookingStartTime.plusMinutes(BOOKING_DURATION));
+        }
+
+        // Add tables that didn't have any bookings and add slots until the end of the last booking time
+        for (TableEntity table : tables) {
+            UUID tableId = table.getId();
+            LocalTime slotStartTime = tableCurrentSlotStart.getOrDefault(tableId, BOOKING_MINIMUM_START_TIME);
+
+            if (!slotStartTime.isAfter(BOOKING_MAXIMUM_START_TIME)) {
+                tableFreeSlots.computeIfAbsent(tableId, k -> new ArrayList<>())
+                        .add(new BookingSlotDto(slotStartTime, BOOKING_MAXIMUM_START_TIME));
+            }
+        }
+
+        return tableFreeSlots;
     }
 }

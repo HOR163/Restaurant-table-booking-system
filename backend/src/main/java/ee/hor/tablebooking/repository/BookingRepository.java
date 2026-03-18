@@ -12,18 +12,27 @@ public interface BookingRepository extends JpaRepository<BookingEntity, UUID> {
     List<BookingEntity> findAllByUserIdAndStartTimeBetween(UUID id, OffsetDateTime spanStart, OffsetDateTime spanEnd);
 
     @Query("SELECT b FROM BookingEntity b " +
-            "JOIN TableEntity t " +
-            "JOIN RestaurantEntity r " +
+            "JOIN b.table t " +
+            "JOIN t.restaurant r " +
             "WHERE r.id = :restaurantId " +
             "AND b.startTime BETWEEN :spanStart AND :spanEnd")
     List<BookingEntity> findAllByRestaurantIdAndStartTimeIsBetween(UUID restaurantId, OffsetDateTime spanStart, OffsetDateTime spanEnd);
 
-    @Query("SELECT b FROM BookingEntity b JOIN TableEntity t JOIN RestaurantEntity r WHERE r.id = :restaurantId")
+    @Query("SELECT b FROM BookingEntity b " +
+            "JOIN b.table t " +
+            "JOIN t.restaurant r " +
+            "WHERE r.id = :restaurantId")
     List<BookingEntity> findAllByRestaurantId(UUID restaurantId);
 
-    @Query("SELECT b FROM BookingEntity b JOIN TableEntity t JOIN RestaurantEntity r WHERE r.id = :restaurantId AND b.startTime > :spanStart")
+    @Query("SELECT b FROM BookingEntity b " +
+            "JOIN b.table t " +
+            "JOIN t.restaurant r " +
+            "WHERE r.id = :restaurantId AND b.startTime > :spanStart")
     List<BookingEntity> findAllByRestaurantIdAndStartTimeIsAfter(UUID restaurantId, OffsetDateTime spanStart);
 
-    @Query("SELECT b FROM BookingEntity b JOIN TableEntity t JOIN RestaurantEntity r WHERE r.id = :restaurantId AND b.startTime < :spanEnd")
+    @Query("SELECT b FROM BookingEntity b " +
+            "JOIN b.table t " +
+            "JOIN t.restaurant r " +
+            "WHERE r.id = :restaurantId AND b.startTime < :spanEnd")
     List<BookingEntity> findAllByRestaurantIdAndStartTimeIsBefore(UUID restaurantId, OffsetDateTime spanEnd);
 }

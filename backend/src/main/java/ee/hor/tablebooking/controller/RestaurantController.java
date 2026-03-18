@@ -1,6 +1,7 @@
 package ee.hor.tablebooking.controller;
 
 import ee.hor.tablebooking.dto.BookingDto;
+import ee.hor.tablebooking.dto.BookingSlotDto;
 import ee.hor.tablebooking.dto.RestaurantDto;
 import ee.hor.tablebooking.dto.TableDto;
 import ee.hor.tablebooking.service.BookingService;
@@ -15,10 +16,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -42,14 +46,19 @@ public class RestaurantController {
 
     @GetMapping("/{id}/bookings")
     public ResponseEntity<List<BookingDto>> getBookings(@PathVariable UUID id,
-                                                        @PathParam("spanStart") OffsetDateTime spanStart,
-                                                        @PathParam("spanEnd") OffsetDateTime spanEnd) {
+                                                        @RequestParam(value = "spanStart", required = false) OffsetDateTime spanStart,
+                                                        @RequestParam(value = "spanEnd", required = false) OffsetDateTime spanEnd) {
         return ResponseEntity.ok(bookingService.getRestaurantBookings(id, spanStart, spanEnd));
     }
 
     @GetMapping("/{id}/tables")
     public ResponseEntity<List<TableDto>> getTables(@PathVariable UUID id) {
         return ResponseEntity.ok().body(tableService.getTablesInRestaurant(id));
+    }
+
+    @GetMapping("/{id}/slots")
+    public ResponseEntity<Map<UUID, List<BookingSlotDto>>> getBookingSlots(@PathVariable UUID id, @RequestParam(value = "date", required = true) LocalDate date) {
+        return ResponseEntity.ok().body(bookingService.getRestaurantBookingSlots(id, date));
     }
 
     @PostMapping
