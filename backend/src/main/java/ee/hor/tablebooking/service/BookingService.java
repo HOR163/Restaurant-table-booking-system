@@ -4,6 +4,7 @@ import ee.hor.tablebooking.dto.BookingDto;
 import ee.hor.tablebooking.dto.BookingSlotDto;
 import ee.hor.tablebooking.entity.BookingEntity;
 import ee.hor.tablebooking.entity.TableEntity;
+import ee.hor.tablebooking.excpetion.InvalidTimeException;
 import ee.hor.tablebooking.excpetion.ResourceNotFoundException;
 import ee.hor.tablebooking.mapper.BookingMapper;
 import ee.hor.tablebooking.repository.BookingRepository;
@@ -32,7 +33,7 @@ import java.util.UUID;
 @Transactional
 public class BookingService {
 
-    public static final int BOOKING_DURATION = 180;
+    public static final int BOOKING_DURATION_IN_MINUTES = 180;
     public static final LocalTime BOOKING_MINIMUM_START_TIME = LocalTime.of(10, 0, 0);
     public static final LocalTime BOOKING_MAXIMUM_START_TIME = LocalTime.of(21, 0, 0);
     private static final int BOOKING_PENDING_MINUTES = 15;
@@ -57,6 +58,9 @@ public class BookingService {
         }
         if (!tableRepository.existsById(bookingDto.getTableId())) {
             throw new ResourceNotFoundException("Table with given id does not exist");
+        }
+        if (bookingDto.getStartTime().isBefore(OffsetDateTime.now())) {
+            throw new InvalidTimeException("Booking date has to be after the current date");
         }
 
         BookingEntity bookingEntity = bookingMapper.mapToEntity(bookingDto);
@@ -127,12 +131,12 @@ public class BookingService {
             LocalTime bookingStartTime = booking.getStartTime().toLocalTime();
             LocalTime slotStartTime = tableCurrentSlotStart.getOrDefault(tableId, BOOKING_MINIMUM_START_TIME);
 
-            if (Duration.between(slotStartTime, bookingStartTime).toMinutes() >= BOOKING_DURATION) {
+            if (Duration.between(slotStartTime, bookingStartTime).toMinutes() >= BOOKING_DURATION_IN_MINUTES) {
                 tableFreeSlots.computeIfAbsent(tableId, k -> new ArrayList<>())
                         .add(new BookingSlotDto(slotStartTime, bookingStartTime));
             }
 
-            tableCurrentSlotStart.put(tableId, bookingStartTime.plusMinutes(BOOKING_DURATION));
+            tableCurrentSlotStart.put(tableId, bookingStartTime.plusMinutes(BOOKING_DURATION_IN_MINUTES));
         }
 
         // Add tables that didn't have any bookings and add slots until the end of the last booking time

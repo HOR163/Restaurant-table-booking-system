@@ -1,25 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import RestaurantView from './views/RestaurantsView';
+import BookingsView from './views/BookingsView';
+import NewBookingView from './views/NewBookingView';
+import { AppBar, Box, Toolbar, Typography } from '@mui/material';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Box sx={{ flexGrow: 1 }}>
+          <AppBar position="static">
+            <Toolbar className="gap-5">
+              <Typography variant="h6" component="div">
+                <Link to="/">Restaurants</Link>
+              </Typography>
+              <Typography variant="h6" component="div">
+                <Link to="/bookings">Bookings</Link>
+              </Typography>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <Link to="/newBooking">New Booking</Link>
+              </Typography>
+            </Toolbar>
+          </AppBar>
+        </Box>
+
+        <Routes>
+          <Route path="/" element={<RestaurantView />} />
+          <Route path="/bookings" element={<BookingsView />} />
+          <Route path="/newBooking/:restaurantId" element={<NewBookingView />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 
