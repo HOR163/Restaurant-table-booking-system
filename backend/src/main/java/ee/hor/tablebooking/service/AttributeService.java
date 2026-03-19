@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -24,8 +25,12 @@ public class AttributeService {
         AttributeEntity attributeEntity = attributeRepository.findById(attributeId).orElseThrow(
                 () -> new ResourceNotFoundException("Attribute with given id does not exist")
         );
-
         return attributeMapper.mapToDto(attributeEntity);
+    }
+
+    public List<AttributeDto> getAllAttributes() {
+        List<AttributeEntity> attributes = attributeRepository.findAll();
+        return attributeMapper.mapToDto(attributes);
     }
 
     public AttributeDto addAttribute(AttributeDto attributeDto) {

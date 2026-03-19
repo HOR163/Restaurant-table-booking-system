@@ -6,6 +6,7 @@ import ee.hor.tablebooking.excpetion.EntityInUseException;
 import ee.hor.tablebooking.excpetion.ResourceNotFoundException;
 import ee.hor.tablebooking.mapper.RestaurantMapper;
 import ee.hor.tablebooking.repository.RestaurantRepository;
+import ee.hor.tablebooking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class RestaurantService {
 
     private final RestaurantMapper restaurantMapper;
     private final RestaurantRepository restaurantRepository;
+    private final UserRepository userRepository;
 
     public RestaurantDto getRestaurant(UUID id) {
         RestaurantEntity restaurant = restaurantRepository.findById(id).orElseThrow(
@@ -35,6 +37,10 @@ public class RestaurantService {
     }
 
     public RestaurantDto addRestaurant(RestaurantDto restaurantDto) {
+        if (!userRepository.existsById(restaurantDto.getOwnerId())) {
+            throw new ResourceNotFoundException("User with given id does not exist");
+        }
+
         RestaurantEntity restaurantEntity = restaurantMapper.mapToEntity(restaurantDto);
 
         RestaurantEntity newRestaurant = restaurantRepository.save(restaurantEntity);

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -24,6 +25,11 @@ public class AttributeController {
     @GetMapping("/{id}")
     public ResponseEntity<AttributeDto> getAttribute(@PathVariable UUID id) {
         return ResponseEntity.ok(attributeService.getAttribute(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AttributeDto>> getAllAttributes() {
+        return ResponseEntity.ok(attributeService.getAllAttributes());
     }
 
     @PostMapping

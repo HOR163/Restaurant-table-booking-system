@@ -6,6 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring",
@@ -17,6 +19,8 @@ public interface AttributeMapper {
     @Mapping(target = "tables", ignore = true)
     @Mapping(target = "id", ignore = true)
     AttributeEntity mapToEntity(AttributeDto attributeDto);
+
+    List<AttributeDto> mapToDto(Collection<AttributeEntity> attributeEntities);
 
     default UUID toId(AttributeEntity attributeEntity) {
         return attributeEntity != null ? attributeEntity.getId() : null;
