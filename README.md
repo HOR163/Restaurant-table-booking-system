@@ -54,3 +54,5 @@ You can setup the database view inside the editor, for that:
 - Setting up and using custom ApplicationExceptions - 1h
 - Timeslot finding - 2h 30m
 - Defining abstract BaseApiService, creating restaurant list view - 3h
+- Updating BaseApiService, other services in frontend, DTOs - 4h
+- Check for colliding booking times - 20m

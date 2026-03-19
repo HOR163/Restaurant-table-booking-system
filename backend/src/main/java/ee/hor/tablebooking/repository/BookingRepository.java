@@ -35,4 +35,10 @@ public interface BookingRepository extends JpaRepository<BookingEntity, UUID> {
             "JOIN t.restaurant r " +
             "WHERE r.id = :restaurantId AND b.startTime < :spanEnd")
     List<BookingEntity> findAllByRestaurantIdAndStartTimeIsBefore(UUID restaurantId, OffsetDateTime spanEnd);
+
+    @Query("SELECT b FROM BookingEntity b " +
+            "JOIN b.table t " +
+            "WHERE t.id = :tableId " +
+            "AND b.startTime BETWEEN :spanStart AND :spanEnd")
+    List<BookingEntity> findAllByTableIdAndStartTimeIsBetween(UUID tableId, OffsetDateTime spanStart, OffsetDateTime spanEnd);
 }

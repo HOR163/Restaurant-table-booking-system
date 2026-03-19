@@ -6,6 +6,7 @@ import ee.hor.tablebooking.entity.BookingEntity;
 import ee.hor.tablebooking.entity.TableEntity;
 import ee.hor.tablebooking.excpetion.InvalidTimeException;
 import ee.hor.tablebooking.excpetion.ResourceNotFoundException;
+import ee.hor.tablebooking.excpetion.TimespanAlreadyInUseException;
 import ee.hor.tablebooking.mapper.BookingMapper;
 import ee.hor.tablebooking.repository.BookingRepository;
 import ee.hor.tablebooking.repository.RestaurantRepository;
@@ -61,6 +62,12 @@ public class BookingService {
         }
         if (bookingDto.getStartTime().isBefore(OffsetDateTime.now())) {
             throw new InvalidTimeException("Booking date has to be after the current date");
+        }
+
+        if (!bookingRepository.findAllByTableIdAndStartTimeIsBetween(bookingDto.getTableId(),
+                bookingDto.getStartTime(),
+                bookingDto.getStartTime().plusMinutes(BOOKING_DURATION_IN_MINUTES)).isEmpty()) {
+            throw new TimespanAlreadyInUseException("Selected timespan is already in use");
         }
 
         BookingEntity bookingEntity = bookingMapper.mapToEntity(bookingDto);
