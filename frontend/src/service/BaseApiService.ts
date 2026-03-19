@@ -1,42 +1,97 @@
 import { z } from "zod";
 
-export abstract class BaseApiService<T> {
-    // No base url due to proxy configuration in package.json
-    private BASE_URL: string = "";
-    private ENDPOINT_URL: string = "";
 
-    constructor(endpoint: string, private schema: z.Schema<T>) {
-        this.ENDPOINT_URL = `${this.BASE_URL}${endpoint}`;
+export abstract class BaseApiService<T> {
+    // No base url due to proxy
+    private BASE_URL = "";
+
+    constructor(private schema: z.Schema<T>) {
     }
 
-    async getAll(): Promise<T[]> {
+    protected async getSingle(subEndpoint: string): Promise<T | null> {
+        const requestUrl = `${this.BASE_URL}${subEndpoint}`;
         try {
-            const response = await fetch(this.ENDPOINT_URL);
+            const response = await fetch(requestUrl);
             const json = await response.json();
-            return z.array(this.schema).parse(json);
+
+            if (z.safeParse(this.schema, json).success) {
+                return json;
+            }
+
+            console.error(`Invalid schema gotten from get request to ${requestUrl}`)
+            return null;
+
         } catch (error) {
-            console.error(`Error fetching data from ${this.ENDPOINT_URL}:`, error);
+            console.error(`Error with post request to ${requestUrl} ${error}`)
+            return null;
+        }
+    }
+
+        protected async getArray(subEndpoint: string): Promise<T[]> {
+        const requestUrl = `${this.BASE_URL}${subEndpoint}`;
+        try {
+            const response = await fetch(requestUrl);
+            const json = await response.json();
+
+            if (z.safeParse(z.array(this.schema), json).success) {
+                return json;
+            }
+
+            console.error(`Invalid schema gotten from get request to ${requestUrl}`)
+            return [];
+
+        } catch (error) {
+            console.error(`Error with post request to ${requestUrl} ${error}`)
             return [];
         }
     }
 
-    async create(data: Omit<T, "id">): Promise<T | null> {
+    protected async post(subEndpoint: string, data: Omit<T, "id">): Promise<T | null> {
+        const requestUrl = `${this.BASE_URL}${subEndpoint}`;
         try {
-            const response = await fetch(this.ENDPOINT_URL, {
-                method: "POST",
+            const response = await fetch(requestUrl, {
+                "method": "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(data)
             });
+
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                console.error(`Post to url ${requestUrl} failed with code ${response.status}`)
+                return null;
             }
+
             const json = await response.json();
-            return this.schema.parse(json);
-        } catch (error) {
-            console.error(`Error creating data at ${this.ENDPOINT_URL}:`, error);
+
+            if (z.safeParse(this.schema, json).success) {
+                return json;
+            }
+
+            console.error(`Invalid schema gotten form post request to ${requestUrl}`)
             return null;
+
+        } catch (error) {
+            console.error(`Error with post request to ${requestUrl} ${error}`)
+            return null;
+        }
+    }
+
+    protected async delete(subEndpoint: string): Promise<number> {
+        const requestUrl = `${this.BASE_URL}${subEndpoint}`;
+        try {
+            const response = await fetch(requestUrl, {
+                "method": "DELETE"
+            });
+
+            if (!response.ok) {
+                console.error(`Delete to url ${requestUrl} failed with code ${response.status}`)
+            }
+            return response.status;
+
+        } catch (error) {
+            console.error(`Error with post request to ${requestUrl} ${error}`)
+            return -1;
         }
     }
 }
