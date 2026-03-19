@@ -28,6 +28,7 @@ function App() {
         <Routes>
           <Route path="/" element={<RestaurantView />} />
           <Route path="/bookings" element={<BookingsView />} />
+          <Route path="/newBooking" element={<NewBookingView />} />
           <Route path="/newBooking/:restaurantId" element={<NewBookingView />} />
         </Routes>
       </BrowserRouter>
