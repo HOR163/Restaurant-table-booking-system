@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const AttributeSchema = z.object({
+export const AttributeSchema = z.object({
     id: z.uuid(),
     name: z.string()
 })

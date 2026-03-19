@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const BookingSchema = z.object({
+export const BookingSchema = z.object({
     id: z.uuid(),
     tableId: z.uuid(),
     userId: z.uuid(),

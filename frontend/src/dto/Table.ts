@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-const TableSchema = z.object({
+export const TableSchema = z.object({
     id: z.uuid(),
-    restaurantId: z.email(),
+    restaurantId: z.uuid(),
     seatsAmount: z.int(),
     attributes: z.array(z.uuid())
 })

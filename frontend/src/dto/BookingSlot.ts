@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const BookingSlotSchema = z.object({
+export const BookingSlotSchema = z.object({
     startTime: z.iso.time(),
     endTime: z.iso.time()
 })
