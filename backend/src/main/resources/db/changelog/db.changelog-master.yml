@@ -216,3 +216,20 @@ databaseChangeLog:
             constraintName: fk_table_attribute_to_attribute
             referencedTableName: attribute
             referencedColumnNames: id
+  # Add table number
+  - changeSet:
+      id: 2026-03-20 Add table number to tables
+      author: HOR163
+      changes:
+        - addColumn:
+            tableName: table
+            columns:
+              - column:
+                  name: table_number
+                  type: smallint
+                  constraints:
+                    nullable: false
+        # Constraint for the tables to have unique numbers across a single restaurant
+        - sql:
+            sql: ALTER TABLE "table" ADD CONSTRAINT uq_restaurant_table_number UNIQUE (restaurant_id, table_number)
+

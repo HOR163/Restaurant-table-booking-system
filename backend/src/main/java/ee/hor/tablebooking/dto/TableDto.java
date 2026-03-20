@@ -10,5 +10,6 @@ public class TableDto {
     private UUID id;
     private UUID restaurantId;
     private Short seatsAmount;
+    private Short tableNumber;
     private List<UUID> attributes;
 }

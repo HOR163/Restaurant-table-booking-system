@@ -46,5 +46,8 @@ public class TableEntity {
     @JoinTable(name = "table_attribute", joinColumns = {@JoinColumn(name = "table_id")}, inverseJoinColumns = {@JoinColumn(name = "attribute_id")})
     private Set<AttributeEntity> attributes = new LinkedHashSet<>();
 
+    @NotNull
+    @Column(name="table_number", nullable=false)
+    private Short tableNumber;
 
 }
