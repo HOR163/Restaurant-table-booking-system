@@ -42,6 +42,9 @@ You can setup the database view inside the editor, for that:
 4. Run the frontend with `npm start`
 5. If you want, you can build it with `npm build`
 
+### Sample data
+If you want to enable sample data, then go to file `backend/src/main/resources/db/changelog/db.changelog-master.yml` and uncommment the last two lines.  
+This will add changesets that will add some AI generated data.
 
 
 ## Time management
@@ -59,3 +62,4 @@ You can setup the database view inside the editor, for that:
 - Add table number - 30m
 - New booking: add state manager and attribute list - 3h 30m
 - New booking: filters, score and booking creation - 4h
+- My bookings view and sample data - 2h

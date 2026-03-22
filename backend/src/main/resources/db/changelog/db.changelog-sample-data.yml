@@ -1,0 +1,249 @@
+databaseChangeLog:
+  # 1. Create a single owner/user
+  - changeSet:
+      id: 2026-03-22 Add user
+      author: Gemini
+      changes:
+        - insert:
+            tableName: user
+            columns:
+              - column: { name: id, value: "f04b862d-eb29-4fd6-8ada-b882e71b2b26" }
+              - column: { name: email, value: "user@mail.com" }
+              - column: { name: password, value: "always_hash_your_passwords_lol" }
+
+  # 2. Create 20 unique attributes
+  - changeSet:
+      id: 2026-03-22 Add attributes
+      author: Gemini
+      changes:
+        - loadData:
+            tableName: attribute
+            file: db/changelog/sample-attributes.csv
+            columns:
+              - column:
+                  header: id
+                  name: id
+                  type: uuid
+              - column:
+                  header: name
+                  name: name
+                  type: string
+
+  # 3. Create Multiple Restaurants
+  - changeSet:
+      id: 2026-03-22 Add restaurants
+      author: Gemini
+      changes:
+        - insert:
+            tableName: restaurant
+            columns:
+              - column: { name: id, value: "00000000-0000-4000-8000-000000000001" }
+              - column: { name: name, value: "The Golden Fork" }
+              - column: { name: owner, value: "f04b862d-eb29-4fd6-8ada-b882e71b2b26" }
+        - insert:
+            tableName: restaurant
+            columns:
+              - column: { name: id, value: "00000000-0000-4000-8000-000000000002" }
+              - column: { name: name, value: "Urban Bistro" }
+              - column: { name: owner, value: "f04b862d-eb29-4fd6-8ada-b882e71b2b26" }
+
+  # 4. Create Tables for Restaurant 1 (6 tables, varying sizes 1-10)
+  - changeSet:
+      id: 2026-03-22 Add tables to restaurant 1
+      author: Gemini
+      changes:
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "10000000-0000-4000-8000-000000000001" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000001" }
+              - column: { name: seats_amount, value: 2 }
+              - column: { name: table_number, value: 1 }
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "10000000-0000-4000-8000-000000000002" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000001" }
+              - column: { name: seats_amount, value: 4 }
+              - column: { name: table_number, value: 2 }
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "10000000-0000-4000-8000-000000000003" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000001" }
+              - column: { name: seats_amount, value: 6 }
+              - column: { name: table_number, value: 3 }
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "10000000-0000-4000-8000-000000000004" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000001" }
+              - column: { name: seats_amount, value: 10 }
+              - column: { name: table_number, value: 4 }
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "10000000-0000-4000-8000-000000000005" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000001" }
+              - column: { name: seats_amount, value: 1 }
+              - column: { name: table_number, value: 5 }
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "10000000-0000-4000-8000-000000000006" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000001" }
+              - column: { name: seats_amount, value: 8 }
+              - column: { name: table_number, value: 6 }
+
+  # 5. Assign Attributes to Tables (Join Table)
+  - changeSet:
+      id: 2026-03-22 Add table attributes
+      author: Gemini
+      changes:
+        # Table 1 is a Window Seat
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "10000000-0000-4000-8000-000000000001" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000001" }
+        # Table 2 is a Booth
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "10000000-0000-4000-8000-000000000002" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000005" }
+        # Table 3 is Outdoor
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "10000000-0000-4000-8000-000000000003" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000006" }
+        # Table 4 is Private & Romantic (Multiple attributes)
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "10000000-0000-4000-8000-000000000004" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000015" }
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "10000000-0000-4000-8000-000000000004" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000012" }
+        # Table 5 is a Stool near the Bar
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "10000000-0000-4000-8000-000000000005" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000018" }
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "10000000-0000-4000-8000-000000000005" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000010" }
+        # Table 6 is Wheelchair Accessible
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "10000000-0000-4000-8000-000000000006" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000008" }
+
+
+  # 6. Create Tables for Restaurant 2 (Urban Bistro - 6 tables)
+  - changeSet:
+      id: 2026-03-22 Add tables to restaurant 2
+      author: Gemini
+      changes:
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "20000000-0000-4000-8000-000000000001" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000002" }
+              - column: { name: seats_amount, value: 2 }
+              - column: { name: table_number, value: 1 }
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "20000000-0000-4000-8000-000000000002" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000002" }
+              - column: { name: seats_amount, value: 2 }
+              - column: { name: table_number, value: 2 }
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "20000000-0000-4000-8000-000000000003" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000002" }
+              - column: { name: seats_amount, value: 4 }
+              - column: { name: table_number, value: 3 }
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "20000000-0000-4000-8000-000000000004" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000002" }
+              - column: { name: seats_amount, value: 5 }
+              - column: { name: table_number, value: 4 }
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "20000000-0000-4000-8000-000000000005" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000002" }
+              - column: { name: seats_amount, value: 8 }
+              - column: { name: table_number, value: 5 }
+        - insert:
+            tableName: "table"
+            columns:
+              - column: { name: id, value: "20000000-0000-4000-8000-000000000006" }
+              - column: { name: restaurant_id, value: "00000000-0000-4000-8000-000000000002" }
+              - column: { name: seats_amount, value: 3 }
+              - column: { name: table_number, value: 6 }
+
+  # 7. Assign Attributes to Restaurant 2 Tables
+  - changeSet:
+      id: 2026-03-22 Add table attributes to restaurant 2
+      author: Gemini
+      changes:
+        # Table 1: Pet Friendly
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "20000000-0000-4000-8000-000000000001" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000007" }
+        # Table 2: Outdoor & Heated
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "20000000-0000-4000-8000-000000000002" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000006" }
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "20000000-0000-4000-8000-000000000002" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000011" }
+        # Table 3: Quiet Corner
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "20000000-0000-4000-8000-000000000003" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000002" }
+        # Table 4: Family Style
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "20000000-0000-4000-8000-000000000004" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000013" }
+        # Table 5: Round Table & Near Kitchen
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "20000000-0000-4000-8000-000000000005" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000017" }
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "20000000-0000-4000-8000-000000000005" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000009" }
+        # Table 6: Power Outlet
+        - insert:
+            tableName: table_attribute
+            columns:
+              - column: { name: table_id, value: "20000000-0000-4000-8000-000000000006" }
+              - column: { name: attribute_id, value: "00000000-0000-4000-8000-000000000016" }

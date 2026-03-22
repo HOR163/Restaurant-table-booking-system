@@ -233,3 +233,6 @@ databaseChangeLog:
         - sql:
             sql: ALTER TABLE "table" ADD CONSTRAINT uq_restaurant_table_number UNIQUE (restaurant_id, table_number)
 
+  # Enable sample data
+#  - include:
+#      file: db/changelog/db.changelog-sample-data.yml
