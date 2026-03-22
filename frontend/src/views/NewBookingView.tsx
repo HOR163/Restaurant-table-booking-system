@@ -37,169 +37,168 @@ export default function NewBookingView() {
     validateState,
   } = useNewBooking();
 
+  const MINIMUM_SCORE_FOR_RECOMMENDATION = 0.5;
+
   return (
-    <>
-      {/* 2. MAIN BODY */}
-      <main className="flex flex-1 overflow-hidden">
-        {/* LEFT SIDEBAR */}
-        <aside className="w-1/4 p-6 border-r bg-white overflow-y-hidden hidden lg:block">
-          <Typography variant="subtitle2" className="text-gray-500 pb-4">
-            Filters
+    <main className="flex flex-1 overflow-hidden">
+      {/* Filters */}
+      <aside className="w-1/4 p-6 border-r bg-white overflow-y-hidden hidden lg:block">
+        <Typography variant="subtitle2" className="text-gray-500 pb-4">
+          Filters
+        </Typography>
+
+        <div className="space-y-4">
+          <TextField
+            select
+            label="Restaurant"
+            fullWidth
+            size="small"
+            value={bookingState.restaurant?.id ?? ""}
+            onChange={(e) => handleRestaurantChange(e.target.value)}
+          >
+            {Array.from(restaurants.values()).map((r) => (
+              <MenuItem key={r.id} value={r.id}>
+                {r.name}
+              </MenuItem>
+            ))}
+          </TextField>
+
+          <TextField
+            type="date"
+            label="Date"
+            fullWidth
+            size="small"
+            value={bookingState.date ?? ""}
+            onChange={(e) => handleDateChange(e.target.value)}
+          />
+
+          <TextField
+            type="number"
+            label="Number of people"
+            fullWidth
+            size="small"
+            value={bookingState.seatsAmount ?? ""}
+            onChange={(e) => handleSeatsAmountChange(e.target.value)}
+          />
+        </div>
+        <Divider className="py-2" />
+        <Typography variant="subtitle2" className="text-gray-500 pt-3">
+          Attributes
+        </Typography>
+        <Box className="overflow-y-scroll">
+          <FormGroup>
+            {Array.from(restaurantAttributes.values()).map((a) => (
+              <FormControlLabel
+                key={a.id}
+                control={
+                  <Checkbox
+                    checked={bookingState.attributes.includes(a.id)}
+                    onChange={() => handleAttributesChange(a.id)}
+                  />
+                }
+                label={a.name}
+              />
+            ))}
+          </FormGroup>
+        </Box>
+      </aside>
+
+      {/* Table selection */}
+      <section className="flex-1 p-6 overflow-hidden flex-wrap">
+        <div className="flex justify-between items-center mb-6">
+          <Typography variant="h5" className="font-bold text-slate-800">
+            Available Tables
           </Typography>
+        </div>
 
-          <div className="space-y-4">
-            <TextField
-              select
-              label="Restaurant"
-              fullWidth
-              size="small"
-              value={bookingState.restaurant?.id ?? ""}
-              onChange={(e) => handleRestaurantChange(e.target.value)}
-            >
-              {Array.from(restaurants.values()).map((r) => (
-                <MenuItem key={r.id} value={r.id}>
-                  {r.name}
-                </MenuItem>
-              ))}
-            </TextField>
-
-            <TextField
-              type="date"
-              label="Date"
-              fullWidth
-              size="small"
-              value={bookingState.date ?? ""}
-              onChange={(e) => handleDateChange(e.target.value)}
-            />
-
-            <TextField
-              type="number"
-              label="Number of people"
-              fullWidth
-              size="small"
-              value={bookingState.seatsAmount ?? ""}
-              onChange={(e) => handleSeatsAmountChange(e.target.value)}
-            />
+        {bookingState.restaurant === null || bookingState.date === null ? (
+          <div>Select a restaurant first</div>
+        ) : (
+          <div className="flex gap-4">
+            {Array.from(tables.values()).map((t) => (
+              <TableButton
+                key={t.id}
+                table={t}
+                isSelected={bookingState.table?.id === t.id}
+                available={Array.from(bookingSlots.keys()).includes(t.id)}
+                color={
+                  TableAdvisor.getScore(t, bookingState) >=
+                  MINIMUM_SCORE_FOR_RECOMMENDATION
+                    ? "success"
+                    : "error"
+                }
+                onSelect={(tableId) => handleTableChange(tableId)}
+              />
+            ))}
           </div>
-          <Divider className="py-2" />
-          <Typography variant="subtitle2" className="text-gray-500 pt-3">
-            Attributes
-          </Typography>
-          <Box className="overflow-y-scroll">
-            <FormGroup>
-              {Array.from(restaurantAttributes.values()).map((a) => (
-                <FormControlLabel
-                  key={a.id}
-                  control={
-                    <Checkbox
-                      checked={bookingState.attributes.includes(a.id)}
-                      onChange={() => handleAttributesChange(a.id)}
-                    />
-                  }
-                  label={a.name}
-                />
-              ))}
-            </FormGroup>
-          </Box>
-        </aside>
+        )}
+      </section>
 
-        {/* CENTER COLUMN: Table Selection */}
-        <section className="flex-1 p-6 overflow-hidden flex-wrap">
-          <div className="flex justify-between items-center mb-6">
-            <Typography variant="h5" className="font-bold text-slate-800">
-              Available Tables
-            </Typography>
-          </div>
+      {/* Table view */}
+      <aside className="w-1/4 p-6 border-l bg-white hidden xl:block">
+        <Typography variant="h6" className="font-bold mb-4">
+          Booking details
+        </Typography>
 
-          {/* Responsive Grid of Cards */}
-          {bookingState.restaurant === null || bookingState.date === null ? (
-            <div>Select a restaurant first</div>
-          ) : (
-            <div className="flex gap-4">
-              {Array.from(tables.values()).map((t) => (
-                <TableButton
-                  key={t.id}
-                  table={t}
-                  isSelected={bookingState.table?.id === t.id}
-                  available={Array.from(bookingSlots.keys()).includes(t.id)}
-                  color={
-                    TableAdvisor.getScore(t, bookingState) >= 0.5
-                      ? "success"
-                      : "error"
-                  }
-                  onSelect={(tableId) => handleTableChange(tableId)}
-                />
-              ))}
-            </div>
-          )}
-        </section>
+        {bookingState.table ? (
+          <div className="flex flex-col h-full">
+            <Box>
+              <Typography>Table: {bookingState.table.tableNumber}</Typography>
+              <Typography>
+                Number of seats: {bookingState.table.seatsAmount}
+              </Typography>
 
-        {/* RIGHT SIDEBAR: Action Zone */}
-        <aside className="w-1/4 p-6 border-l bg-white hidden xl:block">
-          <Typography variant="h6" className="font-bold mb-4">
-            Booking details
-          </Typography>
-
-          {bookingState.table ? (
-            <div className="flex flex-col h-full">
-              <Box>
-                <Typography>Table: {bookingState.table.tableNumber}</Typography>
-                <Typography>
-                  Number of seats: {bookingState.table.seatsAmount}
-                </Typography>
-
-                <Box className="flex gap-1 pt-2 flex-wrap">
-                  {bookingState.table.attributes.map((attributeId) => (
-                    <AttributeCard
-                      key={attributeId}
-                      name={attributes.get(attributeId)?.name ?? "ERROR"}
-                      isSelected={bookingState.attributes.includes(attributeId)}
-                      isMissing={!bookingState.attributes.includes(attributeId)}
-                    />
-                  ))}
-                </Box>
+              <Box className="flex gap-1 pt-2 flex-wrap">
+                {bookingState.table.attributes.map((attributeId) => (
+                  <AttributeCard
+                    key={attributeId}
+                    name={attributes.get(attributeId)?.name ?? "ERROR"}
+                    isSelected={bookingState.attributes.includes(attributeId)}
+                    isMissing={!bookingState.attributes.includes(attributeId)}
+                  />
+                ))}
               </Box>
-              <div className="flex flex-col min-h-0 mt-4 flex-1">
-                <Typography variant="subtitle2" className="text-gray-500">
-                  Select Time
-                </Typography>
-                <div className="grid grid-cols-2 gap-2 overflow-y-auto flex-1 auto-rows-min">
-                  {TimeFinder.getStartTimes(
-                    bookingSlots.get(bookingState.table.id) ?? [],
-                  ).map((time) => (
-                    <Button
-                      key={time}
-                      variant={
-                        bookingState.time === time ? "contained" : "outlined"
-                      }
-                      size="small"
-                      onClick={() => handleTimeChange(time)}
-                    >
-                      {time}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <div className="pt-2 pb-5">
-                <Button
-                  variant="contained"
-                  fullWidth
-                  size="large"
-                  className="m-4 py-20"
-                  disabled={!validateState(bookingState)}
-                  onClick={() => handleSubmit()}
-                >
-                  Confirm Booking
-                </Button>
+            </Box>
+            <div className="flex flex-col min-h-0 mt-4 flex-1">
+              <Typography variant="subtitle2" className="text-gray-500">
+                Select Time
+              </Typography>
+              <div className="grid grid-cols-2 gap-2 overflow-y-auto flex-1 auto-rows-min">
+                {TimeFinder.getStartTimes(
+                  bookingSlots.get(bookingState.table.id) ?? [],
+                ).map((time) => (
+                  <Button
+                    key={time}
+                    variant={
+                      bookingState.time === time ? "contained" : "outlined"
+                    }
+                    size="small"
+                    onClick={() => handleTimeChange(time)}
+                  >
+                    {time}
+                  </Button>
+                ))}
               </div>
             </div>
-          ) : (
-            <div className="text-center mt-20 text-gray-400">
-              <Typography>Select a table to see available times</Typography>
+            <div className="pt-2 pb-5">
+              <Button
+                variant="contained"
+                fullWidth
+                size="large"
+                className="m-4 py-20"
+                disabled={!validateState(bookingState)}
+                onClick={() => handleSubmit()}
+              >
+                Confirm Booking
+              </Button>
             </div>
-          )}
-        </aside>
-      </main>
-    </>
+          </div>
+        ) : (
+          <div className="text-center mt-20 text-gray-400">
+            <Typography>Select a table to see available times</Typography>
+          </div>
+        )}
+      </aside>
+    </main>
   );
 }
