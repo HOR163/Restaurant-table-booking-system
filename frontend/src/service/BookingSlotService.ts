@@ -14,11 +14,12 @@ export class BookingSlotService {
             const response = await fetch(requestUrl);
             const json = await response.json();
 
-            if (z.safeParse(z.record(z.uuid(), z.array(this.schema)), json).success) {
+            const parseResult = z.safeParse(z.record(z.uuid(), z.array(this.schema)), json);
+            if (parseResult.success) {
                 return new Map(Object.entries(json));
             }
 
-            console.error(`Invalid schema gotten from get request to ${requestUrl}`);
+            console.error(`Invalid schema gotten from get request to ${requestUrl}`, parseResult.error);
 
             return new Map();
         } catch (error) {

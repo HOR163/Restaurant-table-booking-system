@@ -14,11 +14,12 @@ export abstract class BaseApiService<T> {
             const response = await fetch(requestUrl);
             const json = await response.json();
 
-            if (z.safeParse(this.schema, json).success) {
+            const parseResult = z.safeParse(this.schema, json);
+            if (parseResult.success) {
                 return json;
             }
 
-            console.error(`Invalid schema gotten from get request to ${requestUrl}`)
+            console.error(`Invalid schema gotten from get request to ${requestUrl}`, parseResult.error)
             return null;
 
         } catch (error) {
@@ -33,11 +34,12 @@ export abstract class BaseApiService<T> {
             const response = await fetch(requestUrl);
             const json = await response.json();
 
-            if (z.safeParse(z.array(this.schema), json).success) {
+            const parseResult = z.safeParse(z.array(this.schema), json);
+            if (parseResult.success) {
                 return json;
             }
 
-            console.error(`Invalid schema gotten from get request to ${requestUrl}`)
+            console.error(`Invalid schema gotten from get request to ${requestUrl}`, parseResult.error)
             return [];
 
         } catch (error) {
@@ -64,11 +66,12 @@ export abstract class BaseApiService<T> {
 
             const json = await response.json();
 
-            if (z.safeParse(this.schema, json).success) {
+            const parseResult = z.safeParse(this.schema, json);
+            if (parseResult.success) {
                 return json;
             }
 
-            console.error(`Invalid schema gotten form post request to ${requestUrl}`)
+            console.error(`Invalid schema gotten form post request to ${requestUrl}`, parseResult.error)
             return null;
 
         } catch (error) {

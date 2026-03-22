@@ -1,11 +1,14 @@
-import './App.css';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import RestaurantView from './views/RestaurantsView';
-import BookingsView from './views/BookingsView';
-import NewBookingView from './views/NewBookingView';
-import { AppBar, Box, Toolbar, Typography } from '@mui/material';
+import "./App.css";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import RestaurantView from "./views/RestaurantsView";
+import BookingsView from "./views/BookingsView";
+import NewBookingView from "./views/NewBookingView";
+
+import { UserContext, ServiceContext, userContextData, serviceContextData } from "./context";
 
 function App() {
+
   return (
     <div className="h-screen flex flex-col">
       <BrowserRouter>
@@ -25,11 +28,15 @@ function App() {
           </AppBar>
         </Box>
 
-        <Routes>
-          <Route path="/" element={<RestaurantView />} />
-          <Route path="/bookings" element={<BookingsView />} />
-          <Route path="/newBooking" element={<NewBookingView />} />
-        </Routes>
+        <UserContext value={userContextData}>
+          <ServiceContext value={serviceContextData}>
+            <Routes>
+              <Route path="/" element={<RestaurantView />} />
+              <Route path="/bookings" element={<BookingsView />} />
+              <Route path="/newBooking" element={<NewBookingView />} />
+            </Routes>
+          </ServiceContext>
+        </UserContext>
       </BrowserRouter>
     </div>
   );
