@@ -35,7 +35,7 @@ export class TableAdvisor {
             seatScore = table.seatsAmount / (table.seatsAmount + bookingState.seatsAmount);
         }
 
-        score = 0.5 * attributeScore + 0.5 * seatScore;
+        score = 0.2 * attributeScore + 0.8 * seatScore;
 
         return score;
     }
