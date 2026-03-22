@@ -66,3 +66,4 @@ AI usage is in `/docs/ai_usage.md` file
 - New booking: add state manager and attribute list - 3h 30m
 - New booking: filters, score and booking creation - 4h
 - My bookings view and sample data - 2h
+- Analysis and some minor documentation - 1h
