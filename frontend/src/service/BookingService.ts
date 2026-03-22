@@ -10,8 +10,8 @@ export class BookingService extends BaseApiService<Booking> {
         return super.getSingle(`/bookings/${bookingId}`);
     }
 
-    async getUserBookings(userId: string): Promise<Booking[]> {
-        return super.getArray(`/users/${userId}/bookings`);
+    async getUserBookings(userId: string, spanStart: string, spanEnd: string): Promise<Booking[]> {
+        return super.getArray(`/users/${userId}/bookings?spanStart=${spanStart}&spanEnd=${spanEnd}`);
     }
 
     async create(data: Omit<Booking, "id">): Promise<Booking | null> {

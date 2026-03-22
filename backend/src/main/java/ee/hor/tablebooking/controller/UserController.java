@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.OffsetDateTime;
@@ -36,8 +37,8 @@ public class UserController {
 
     @GetMapping("/{id}/bookings")
     public ResponseEntity<List<BookingDto>> getBookings(@PathVariable UUID id,
-                                                        @PathParam("spanStart") OffsetDateTime spanStart,
-                                                        @PathParam("spanEnd") OffsetDateTime spanEnd) {
+                                                        @RequestParam("spanStart") OffsetDateTime spanStart,
+                                                        @RequestParam("spanEnd") OffsetDateTime spanEnd) {
         return ResponseEntity.ok(bookingService.getUserBookings(id, spanStart, spanEnd));
     }
 
