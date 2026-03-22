@@ -41,7 +41,7 @@ export abstract class BaseApiService<T> {
             return [];
 
         } catch (error) {
-            console.error(`Error with post request to ${requestUrl} ${error}`)
+            console.error(`Error with get request to ${requestUrl} ${error}`)
             return [];
         }
     }

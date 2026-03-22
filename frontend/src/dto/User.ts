@@ -1,7 +1,7 @@
 import { z } from "zod";
+import { Identifiable } from "./Identifiable";
 
-export const UserSchema = z.object({
-    id: z.uuid(),
+export const UserSchema = Identifiable.extend({
     email: z.email()
 })
 

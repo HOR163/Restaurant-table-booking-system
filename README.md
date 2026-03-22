@@ -56,3 +56,6 @@ You can setup the database view inside the editor, for that:
 - Defining abstract BaseApiService, creating restaurant list view - 3h
 - Updating BaseApiService, other services in frontend, DTOs - 4h
 - Check for colliding booking times - 20m
+- Add table number - 30m
+- New booking: add state manager and attribute list - 3h 30m
+- New booking: filters, score and booking creation - 4h

@@ -1,8 +1,8 @@
 import { z } from "zod";
+import { Identifiable } from "./Identifiable";
 
-export const AttributeSchema = z.object({
-    id: z.uuid(),
+export const AttributeSchema = Identifiable.extend({
     name: z.string()
-})
+});
 
 export type Attribute = z.infer<typeof AttributeSchema>

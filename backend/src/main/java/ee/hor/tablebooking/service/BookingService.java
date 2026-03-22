@@ -140,10 +140,16 @@ public class BookingService {
 
             if (Duration.between(slotStartTime, bookingStartTime).toMinutes() >= BOOKING_DURATION_IN_MINUTES) {
                 tableFreeSlots.computeIfAbsent(tableId, k -> new ArrayList<>())
-                        .add(new BookingSlotDto(slotStartTime, bookingStartTime));
+                        .add(new BookingSlotDto(slotStartTime, bookingStartTime.minusMinutes(BOOKING_DURATION_IN_MINUTES)));
             }
 
-            tableCurrentSlotStart.put(tableId, bookingStartTime.plusMinutes(BOOKING_DURATION_IN_MINUTES));
+            // Check that with the next booking we don't go over to another day
+            LocalTime newBookingStartTime = bookingStartTime.plusMinutes(BOOKING_DURATION_IN_MINUTES);
+            if (newBookingStartTime.isAfter(bookingStartTime)) {
+                tableCurrentSlotStart.put(tableId, newBookingStartTime);
+            } else {
+                tableCurrentSlotStart.put(tableId, LocalTime.of(23, 59));
+            }
         }
 
         // Add tables that didn't have any bookings and add slots until the end of the last booking time

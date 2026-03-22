@@ -1,7 +1,7 @@
 import { z } from "zod";
+import { Identifiable } from "./Identifiable";
 
-export const RestaurantSchema = z.object({
-    id: z.uuid(),
+export const RestaurantSchema = Identifiable.extend({
     ownerId: z.uuid(),
     name: z.string(),
     tables: z.array(z.uuid()),

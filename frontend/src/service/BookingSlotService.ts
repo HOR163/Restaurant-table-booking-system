@@ -1,13 +1,29 @@
 import { BookingSlot, BookingSlotSchema } from "../dto/BookingSlot";
-import { BaseApiService } from "./BaseApiService";
+import { z } from "zod";
 
 
-export class BookingSlotService extends BaseApiService<BookingSlot> {
-    constructor() {
-        super(BookingSlotSchema);
-    }
+export class BookingSlotService {
+    // No base url due to proxy
+    private BASE_URL = "";
+    private schema = BookingSlotSchema;
 
-    async getForRestaurant(restaurantId: string, date: string): Promise<BookingSlot[]> {
-        return super.getArray(`/restaurants/${restaurantId}/slots?date=${date}`);
+    async getForRestaurant(restaurantId: string, date: string): Promise<Map<string, BookingSlot[]>> {
+        const requestUrl = `${this.BASE_URL}/restaurants/${restaurantId}/slots?date=${date}`;
+
+        try {
+            const response = await fetch(requestUrl);
+            const json = await response.json();
+
+            if (z.safeParse(z.record(z.uuid(), z.array(this.schema)), json).success) {
+                return new Map(Object.entries(json));
+            }
+
+            console.error(`Invalid schema gotten from get request to ${requestUrl}`);
+
+            return new Map();
+        } catch (error) {
+            console.error(`Error with get request to ${requestUrl} ${error}`)
+            return new Map();
+        }
     }
 }

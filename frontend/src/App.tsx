@@ -7,9 +7,9 @@ import { AppBar, Box, Toolbar, Typography } from '@mui/material';
 
 function App() {
   return (
-    <>
+    <div className="h-screen flex flex-col">
       <BrowserRouter>
-        <Box sx={{ flexGrow: 1 }}>
+        <Box>
           <AppBar position="static">
             <Toolbar className="gap-5">
               <Typography variant="h6" component="div">
@@ -29,10 +29,9 @@ function App() {
           <Route path="/" element={<RestaurantView />} />
           <Route path="/bookings" element={<BookingsView />} />
           <Route path="/newBooking" element={<NewBookingView />} />
-          <Route path="/newBooking/:restaurantId" element={<NewBookingView />} />
         </Routes>
       </BrowserRouter>
-    </>
+    </div>
   );
 }
 
