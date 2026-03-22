@@ -25,7 +25,9 @@ This guide assumes you use Intellij for java developement.
 2. Make a copy of `application.properties` and name it as `application-local.properties`
 3. Fill in the missing values for configuration
 4. In the run configuration (top right, press the three-dot button and then `edit`), set `active profiles` to `local`
+5. Before running let gradle load all the dependencies
 
+To run it purely in console, then go to `/backend` and build the project `gradle build`, after that go to `/backend/libs/` and run the created jar file with `java -jar [FILE]`
 
 #### Extras
 You can setup the database view inside the editor, for that:
@@ -41,6 +43,8 @@ You can setup the database view inside the editor, for that:
 3. Run `npm install`
 4. Run the frontend with `npm start`
 5. If you want, you can build it with `npm build`
+
+NOTE: To avoid CORS, then the frontend uses a proxy in `package.json` using `http://127.0.0.1:8080`. Thus the backend should run on port 8080.
 
 ### Sample data
 If you want to enable sample data, then go to file `backend/src/main/resources/db/changelog/db.changelog-master.yml` and uncommment the last two lines.  
