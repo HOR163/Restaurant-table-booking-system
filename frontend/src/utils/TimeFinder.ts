@@ -27,6 +27,11 @@ export class TimeFinder {
         }
     }
 
+    /**
+     * Convert time slots to booking start times, having BOOKING_TIME_STEP_MINUTES in between each start iime
+     * @param slots the booking slots with start time and end time that are inclusive
+     * @returns booking times with BOOKING_TIME_STEP_MINUTES time step up until the end of given slot and so for all slots given
+     */
     static getStartTimes(slots: BookingSlot[]): string[] {
         const bookingTimes: string[] = [];
 

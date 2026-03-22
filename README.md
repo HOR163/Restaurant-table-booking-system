@@ -46,6 +46,9 @@ You can setup the database view inside the editor, for that:
 If you want to enable sample data, then go to file `backend/src/main/resources/db/changelog/db.changelog-master.yml` and uncommment the last two lines.  
 This will add changesets that will add some AI generated data.
 
+## Analysis
+The analysis is put in the `/docs/analysis.md` file  
+AI usage is in `/docs/ai_usage.md` file
 
 ## Time management
 - Setup (base projects) - 2h

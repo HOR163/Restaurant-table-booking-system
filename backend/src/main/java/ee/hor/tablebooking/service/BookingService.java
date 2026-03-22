@@ -53,6 +53,16 @@ public class BookingService {
         return bookingMapper.mapToDto(bookingEntity);
     }
 
+    /**
+     * Add a booking
+     *
+     * @throws ResourceNotFoundException if user or table doesn't exist
+     * @throws TimespanAlreadyInUseException if the timespan is already booked
+     * @throws InvalidTimeException if the selected time is before the current time
+     *
+     * @param bookingDto DTO for the booking
+     * @return the saved booking DTO, if the booking succeeded
+     */
     public BookingDto addBooking(BookingDto bookingDto) {
         if (!userRepository.existsById(bookingDto.getUserId())) {
             throw new ResourceNotFoundException("User with given id does not exist");
@@ -86,6 +96,13 @@ public class BookingService {
         return bookingMapper.mapToDto(newBooking);
     }
 
+    /**
+     * Delete a booking
+     *
+     * @throws ResourceNotFoundException if booking with given id does not exist
+     *
+     * @param id id of the booking to be deleted
+     */
     public void deleteBooking(UUID id) {
         if (!bookingRepository.existsById(id)) {
             throw new ResourceNotFoundException("Booking with given id does not exist");
@@ -94,6 +111,16 @@ public class BookingService {
         bookingRepository.deleteById(id);
     }
 
+    /**
+     * Get bookings in timespan for given user
+     *
+     * @throws ResourceNotFoundException if user with given id was not found
+     *
+     * @param userId the user whose bookings will be found
+     * @param startTime time to start the search (inclusive)
+     * @param endTime time to end the search (inclusive)
+     * @return All the bookings in given timespan
+     */
     public List<BookingDto> getUserBookings(UUID userId, OffsetDateTime startTime, OffsetDateTime endTime) {
         if (!userRepository.existsById(userId)) {
             throw new ResourceNotFoundException("User with given id does not exist");
@@ -103,6 +130,18 @@ public class BookingService {
         return bookingMapper.mapToDto(bookings);
     }
 
+    /**
+     * Get all bookings in given restaurant inside an optional timespan
+     *
+     * If start is null, then all bookings until end are returned
+     * If end is null, then all bookings starting from start are returned
+     * If both start and end are null, then all the bookings are returned
+     *
+     * @param restaurantId id of the restaurant to be
+     * @param spanStart start time of the span (null if not specified)
+     * @param spanEnd end time of the span (null if not specified)
+     * @return list of all bookings inside given timespan
+     */
     public List<BookingDto> getRestaurantBookings(UUID restaurantId, OffsetDateTime spanStart, OffsetDateTime spanEnd) {
         List<BookingEntity> bookings;
         if (spanStart != null && spanEnd != null) {
@@ -117,6 +156,24 @@ public class BookingService {
         return bookingMapper.mapToDto(bookings);
     }
 
+    /**
+     * Get a map of all available booking slots in given restaurant
+     *
+     * The start and end times for spans from where the booking can start. As a single booking lasts
+     * BOOKING_DURATION_IN_MINUTES minutes, then that time will be subtracted from the time between two bookings.
+     * For example if we have two bookings starting at 10.00 and other one at 17.00, then the returned timespan is 13.00
+     * to 14.00. This is because the first booking takes 3 hours, and the newly created booking would also take 3 hours,
+     * thus the last available starting time is 14.00.
+     *
+     * The first booking of the day can start at BOOKING_MINIMUM_START_TIME and the last booking of the day can start at
+     * BOOKING_MAXIMUM_START_TIME. Bookings that cross days are not supported
+     *
+     * @throws ResourceNotFoundException if the specified restaurant does not exist
+     *
+     * @param restaurantId id of the restaurant to search for
+     * @param date date for which the slots should be found
+     * @return map of tableIds for keys and list of available booking slots for values
+     */
     public Map<UUID, List<BookingSlotDto>> getRestaurantBookingSlots(UUID restaurantId, LocalDate date) {
         if (!restaurantRepository.existsById(restaurantId)) {
             throw new ResourceNotFoundException("Restaurant with given id does not exist");
